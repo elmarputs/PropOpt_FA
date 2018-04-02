@@ -13,7 +13,7 @@ int main()
     //--SETUP ENVIRONMENT----
 
     // Setup Spice
-    tudat::spice_interface::loadStandardSpiceKernels();
+    spice_interface::loadStandardSpiceKernels();
 
     // Specify all simulated bodies
     std::vector<std::string> bodies;
@@ -77,10 +77,6 @@ int main()
     boost::shared_ptr<numerical_integrators::IntegratorSettings<>> integratorSettings =
             boost::make_shared<numerical_integrators::IntegratorSettings<>>
             (numerical_integrators::rungeKutta4, 0.0, 30.0);
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ///////////////////////             PROPAGATE ORBIT            ////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
     // Create simulation object and propagate dynamics.
