@@ -56,27 +56,27 @@ int main()
     systemInitialState(4) = 7.5E3;
 
     // Define propagation termination conditions (stop after 5 days)
-    boost::shared_ptr<PropagationTimeTerminationSettings> terminationSettings =
+    boost::shared_ptr<propagators::PropagationTimeTerminationSettings> terminationSettings =
             boost::make_shared<propagators::PropagationTimeTerminationSettings>(5.0 * physical_constants::JULIAN_DAY);
 
     // Settings for translational propagation
-    boost::shared_ptr< TranslationalStatePropagatorSettings<double>> transPropSettings =
-            boost::make_shared<TranslationalStatePropagatorSettings<double>>
+    boost::shared_ptr<propagators::TranslationalStatePropagatorSettings<double>> transPropSettings =
+            boost::make_shared<propagators::TranslationalStatePropagatorSettings<double>>
             (centralBodies, accModelMap, bodiesToProp, systemInitialState, terminationSettings,
-              cowell);
+              propagators::cowell);
 
 
     // Create list of propagation settings
-    std::vector< boost::shared_ptr< SingleArcPropagatorSettings<double>>> propagatorSettingsVector;
+    std::vector<boost::shared_ptr<propagators::SingleArcPropagatorSettings<double>>> propagatorSettingsVector;
     propagatorSettingsVector.push_back(transPropSettings);
 
-    boost::shared_ptr< PropagatorSettings<double>> propagatorSettings =
-            boost::make_shared< MultiTypePropagatorSettings<double>>(propagatorSettingsVector, terminationSettings);
+    boost::shared_ptr<propagators::PropagatorSettings<double>> propagatorSettings =
+            boost::make_shared<propagators::MultiTypePropagatorSettings<double>>(propagatorSettingsVector, terminationSettings);
 
     // Set integrator settings
-    boost::shared_ptr<IntegratorSettings<>> integratorSettings =
-            boost::make_shared<IntegratorSettings<>>
-            (rungeKutta4, 0.0, 30.0);
+    boost::shared_ptr<numerical_integrators::IntegratorSettings<>> integratorSettings =
+            boost::make_shared<numerical_integrators::IntegratorSettings<>>
+            (numerical_integrators::rungeKutta4, 0.0, 30.0);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////             PROPAGATE ORBIT            ////////////////////////////////////////////////////////
@@ -84,7 +84,7 @@ int main()
 
 
     // Create simulation object and propagate dynamics.
-    SingleArcDynamicsSimulator<> dynamicsSimulator(
+    propagators::SingleArcDynamicsSimulator<> dynamicsSimulator(
                 bodyMap, integratorSettings, propagatorSettings, true, false, false );
 
 
