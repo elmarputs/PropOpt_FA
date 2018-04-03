@@ -222,7 +222,7 @@ list(APPEND TUDAT_APPLICATION_ESTIMATION_LIBRARIES tudat_simulation_setup tudat_
     tudat_input_output tudat_basics ${TUDAT_APPLICATION_EXTERNAL_LIBRARIES})
 
 # Add final assignment application.
-add_executable(application_FinalAssignment "${SRCROOT}/finalAssignment.cpp")
+add_executable(application_FinalAssignment "${SRCROOT}/finalAssignment.cpp" "${SRCROOT}/leogeotransfer.cpp")
 setup_executable_target(application_FinalAssignment "${SRCROOT}")
 target_link_libraries(application_FinalAssignment ${TUDAT_APPLICATION_PROPAGATION_LIBRARIES} ${Boost_LIBRARIES} )
 
