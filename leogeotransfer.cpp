@@ -9,18 +9,17 @@ using namespace tudat::propagators;
 
 namespace final_assignment
 {
-    M_
     LeoGeoTransfer::LeoGeoTransfer(double thrustMag, double spImp)
     {
         this->thrustMagnitude = thrustMag;
         this->specificImpulse = spImp;
         spice_interface::loadStandardSpiceKernels();
-        std::cout << "Constructor called!\n";
+        //std::cout << "Constructor called!\n";
     }
 
     LeoGeoTransfer::~LeoGeoTransfer()
     {
-        std::cout << "Destructor called!\n";
+        //std::cout << "Destructor called!\n";
     }
 
     void LeoGeoTransfer::Propagate()
