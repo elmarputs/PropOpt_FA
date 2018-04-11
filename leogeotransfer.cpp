@@ -9,21 +9,26 @@ using namespace tudat::propagators;
 
 namespace final_assignment
 {
-    LeoGeoTransfer::LeoGeoTransfer(double thrustMag, double spImp)
+//    LeoGeoTransfer::LeoGeoTransfer(double thrustMag, double spImp)
+//    {
+//        this->thrustMagnitude = thrustMag;
+//        this->specificImpulse = spImp;
+//        spice_interface::loadStandardSpiceKernels();
+//        //std::cout << "Constructor called!\n";
+//    }
+
+    // LeoGeoTransfer problem contructor
+    LeoGeoTransfer::LeoGeoTransfer(const std::vector<std::vector<double> > &bounds)
     {
-        this->thrustMagnitude = thrustMag;
-        this->specificImpulse = spImp;
-        spice_interface::loadStandardSpiceKernels();
-        //std::cout << "Constructor called!\n";
+
     }
 
-    LeoGeoTransfer::~LeoGeoTransfer()
+    // Function calculating fitness: returns delta V and trip time (called by Pagmo)
+    std::vector<double> LeoGeoTransfer::fitness(const std::vector<double> &xVec) const
     {
-        //std::cout << "Destructor called!\n";
-    }
+        // Create return (i.e. fitness) vector
+        std::vector<double> fitnessVector;
 
-    void LeoGeoTransfer::Propagate()
-    {
         // Specify all simulated bodies
         std::vector<std::string> bodies;
         bodies.push_back("Earth");
@@ -102,18 +107,23 @@ namespace final_assignment
 
 
         // Output propagation data
-        std::map<double, Eigen::Matrix<double, Eigen::Dynamic, 1 >> numericalSolution =
-                dynamicsSimulator.getEquationsOfMotionNumericalSolution();
+//        std::map<double, Eigen::Matrix<double, Eigen::Dynamic, 1 >> numericalSolution =
+//                dynamicsSimulator.getEquationsOfMotionNumericalSolution();
 
-        std::string outputSubFolder = "FA_output/";
+//        std::string outputSubFolder = "FA_output/";
 
         // Write satellite propagation history to file.
-        input_output::writeDataMapToTextFile( numericalSolution,
-                                              "prop_output.dat",
-                                              tudat_applications::getOutputPath() + outputSubFolder,
-                                              "",
-                                              std::numeric_limits< double >::digits10,
-                                              std::numeric_limits< double >::digits10,
-                                              "," );
+//        input_output::writeDataMapToTextFile( numericalSolution,
+//                                              "prop_output.dat",
+//                                              tudat_applications::getOutputPath() + outputSubFolder,
+//                                              "",
+//                                              std::numeric_limits< double >::digits10,
+//                                              std::numeric_limits< double >::digits10,
+//                                              "," );
+        double deltaV = 0;
+        double tripTime = 0;
+
+        fitnessVector.push_back(deltaV);
+        fitnessVector.push_back(tripTime);
     }
 }

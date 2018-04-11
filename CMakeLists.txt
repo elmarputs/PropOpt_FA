@@ -207,6 +207,21 @@ if(USE_NRLMSISE00)
   list(APPEND TUDAT_APPLICATION_EXTERNAL_LIBRARIES nrlmsise00)
 endif()
 
+# Find PaGMO library on local system.
+if( USE_PAGMO )
+  find_package(PaGMO2)
+
+  # Include PaGMO directories.
+  if(NOT APPLE)
+    include_directories(SYSTEM AFTER "${PAGMO_INCLUDE_DIR}")
+  else( )
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -isystem \"${PAGMO_INCLUDE_DIR}\"")
+  endif( )
+
+  list(APPEND TUDAT_APPLICATION_EXTERNAL_LIBRARIES pthread)
+
+endif( )
+
 
 list(APPEND TUDAT_APPLICATION_PROPAGATION_LIBRARIES tudat_simulation_setup tudat_ground_stations tudat_propagators
     tudat_aerodynamics tudat_system_models tudat_geometric_shapes tudat_relativity tudat_gravitation tudat_mission_segments
