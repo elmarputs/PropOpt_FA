@@ -14,8 +14,10 @@ namespace final_assignment
             //LeoGeoTransfer(double thrustMag, double spImp);
             //void Propagate();
             std::vector<double> fitness(const std::vector<double> &x) const;
+            std::pair<std::vector<double>, std::vector<double>> get_bounds() const;
 
         private:
+            const std::vector<std::vector<double>> problemBounds;
             double thrustMagnitude;
             double specificImpulse;
     };

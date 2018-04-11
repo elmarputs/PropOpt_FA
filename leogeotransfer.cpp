@@ -20,7 +20,12 @@ namespace final_assignment
     // LeoGeoTransfer problem contructor
     LeoGeoTransfer::LeoGeoTransfer(const std::vector<std::vector<double> > &bounds)
     {
+        this->problemBounds = bounds;
+    }
 
+    std::pair<std::vector<double>, std::vector<double>> LeoGeoTransfer::get_bounds() const
+    {
+        return {problemBounds[0], problemBounds[1]};
     }
 
     // Function calculating fitness: returns delta V and trip time (called by Pagmo)
