@@ -45,7 +45,7 @@ namespace final_assignment
 
         NamedBodyMap bodyMap = createBodies(bodySettings);
         bodyMap["Vehicle"] = boost::make_shared<Body>();
-        bodyMap["Vehicle"]->setConstantBodyMass(5.0E3);
+        bodyMap["Vehicle"]->setConstantBodyMass(500);
 
         setGlobalFrameBodyEphemerides(bodyMap, "SSB", "ECLIPJ2000");
 
@@ -75,8 +75,8 @@ namespace final_assignment
 
         // Set initial state
         Eigen::Vector6d systemInitialState = Eigen::Vector6d::Zero();
-        systemInitialState(0) = 8.0E6;
-        systemInitialState(4) = 7.5E3;
+        systemInitialState(0) = 6.871E6;
+        systemInitialState(4) = 7.616556E3;
 
         // Create dependent variable for use in stop condition
         boost::shared_ptr<SingleDependentVariableSaveSettings> depVariable =
