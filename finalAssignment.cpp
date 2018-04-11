@@ -2,16 +2,60 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
 
-int main()
+#include "pagmo/algorithms/de1220.hpp"
+#include "pagmo/algorithms/simulated_annealing.hpp"
+#include "pagmo/algorithms/sade.hpp"
+#include "pagmo/algorithms/cmaes.hpp"
+
+int main( )
 {
-    //final_assignment::LeoGeoTransfer transfer = final_assignment::LeoGeoTransfer(10.0, 1500.0);
-    //transfer.Propagate();
+	using namespace finalassignment;
+	using namespace tudat_pagmo_applications;
+	
+	
+    //Set seed for reproducible results
+    pagmo::random_device::set_seed( 123 );
 
-    //final_assignment::LeoGeoTransfer* pTransfer = new final_assignment::LeoGeoTransfer(10.0, 1500.0);
-    //delete pTransfer;
+    // We have two decision variables each with a lower and upper bound, create a vector of vectors that will contain these.
+    std::vector< std::vector< double > > bounds( 2, std::vector< double >( 2, 0.0 ) );
 
-    boost::shared_ptr<final_assignment::LeoGeoTransfer> pTransfer = boost::make_shared<final_assignment::LeoGeoTransfer>(10.0, 1500.0);
-    pTransfer->Propagate();
+    // Define bounds: Search between thrust magnitude of 1 and 10 N and specific impulse between 3000 and 4000
+    bounds[ 0 ][ 0 ] = 10e-3;
+    bounds[ 1 ][ 0 ] = 500e-3;
+    bounds[ 0 ][ 1 ] = 3000;
+    bounds[ 1 ][ 1 ] = 4000;
+
+    // Create object to compute the problem fitness
+    problem prob{LeoGeoTransfer( bounds )};
+
+    // Perform grid saerch
+    createGridSearch( prob, bounds, { 1000, 1000 }, "porkchopEarthMars" );
+
+    // Perform optimization with 1 different optimizers
+    for( int j = 0; j < 1; j++ )
+    {
+        // Retrieve algorothm
+        int algorithmIndex = j;
+        algorithm algo{getAlgorithm( algorithmIndex )};
+
+        // Create an island with 1024 individuals
+        island isl{algo, prob, 1024};
+
+        // Evolve for 100 generations
+        for( int i = 0 ; i < 100; i++ )
+        {
+            isl.evolve();
+            while( isl.status()!=pagmo::evolve_status::idle )
+                isl.wait();
+
+            // Write current iteration results to file
+            printPopulationToFile( isl.get_population( ).get_x( ), "earthMarsLambert_" + std::to_string( j ) + "_" + std::to_string( i ) , false );
+            printPopulationToFile( isl.get_population( ).get_f( ), "earthMarsLambert_" + std::to_string( j ) + "_" + std::to_string( i ) , true );
+
+            std::cout<<i<<" "<<algorithmIndex<<std::endl;
+        }
+    }
+
 
     return 0;
 }
