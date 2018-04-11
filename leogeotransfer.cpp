@@ -83,7 +83,7 @@ namespace final_assignment
                 boost::make_shared<SingleDependentVariableSaveSettings>(relative_distance_dependent_variable, "Vehicle", "Earth");
         // Set propagation stop condition (alt > geo alt)
         boost::shared_ptr<PropagationDependentVariableTerminationSettings> terminationSettings =
-                boost::make_shared<PropagationDependentVariableTerminationSettings>(depVariable, geoAlt, false, false);
+                boost::make_shared<PropagationDependentVariableTerminationSettings>(depVariable, geoR, false, false);
 
         // Settings for translational propagation
         boost::shared_ptr<TranslationalStatePropagatorSettings<double>> transPropSettings =
@@ -112,8 +112,12 @@ namespace final_assignment
 
 
         // Output propagation data
-//        std::map<double, Eigen::Matrix<double, Eigen::Dynamic, 1 >> numericalSolution =
-//                dynamicsSimulator.getEquationsOfMotionNumericalSolution();
+        std::map<double, Eigen::Matrix<double, Eigen::Dynamic, 1 >> numericalSolution =
+                dynamicsSimulator.getEquationsOfMotionNumericalSolution();
+
+        std::map<double, Eigen::Matrix<double, Eigen::Dynamic, 1>>::const_iterator iter;
+        iter = numericalSolution.end();
+        std::cout << iter->first;
 
 //        std::string outputSubFolder = "FA_output/";
 

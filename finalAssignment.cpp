@@ -1,4 +1,7 @@
 #include "leogeotransfer.h"
+#include "applicationOutput.h"
+#include "getAlgorithm.h"
+
 #include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
 
@@ -6,12 +9,13 @@
 #include "pagmo/algorithms/simulated_annealing.hpp"
 #include "pagmo/algorithms/sade.hpp"
 #include "pagmo/algorithms/cmaes.hpp"
+#include "pagmo/pagmo.hpp"
 
 int main( )
 {
-	using namespace finalassignment;
-	using namespace tudat_pagmo_applications;
-	
+    using namespace final_assignment;
+    using namespace tudat_applications;
+    using namespace pagmo;
 	
     //Set seed for reproducible results
     pagmo::random_device::set_seed( 123 );
@@ -49,8 +53,8 @@ int main( )
                 isl.wait();
 
             // Write current iteration results to file
-            printPopulationToFile( isl.get_population( ).get_x( ), "earthMarsLambert_" + std::to_string( j ) + "_" + std::to_string( i ) , false );
-            printPopulationToFile( isl.get_population( ).get_f( ), "earthMarsLambert_" + std::to_string( j ) + "_" + std::to_string( i ) , true );
+            //printPopulationToFile( isl.get_population( ).get_x( ), "earthMarsLambert_" + std::to_string( j ) + "_" + std::to_string( i ) , false );
+            //printPopulationToFile( isl.get_population( ).get_f( ), "earthMarsLambert_" + std::to_string( j ) + "_" + std::to_string( i ) , true );
 
             std::cout<<i<<" "<<algorithmIndex<<std::endl;
         }
