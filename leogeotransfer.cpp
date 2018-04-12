@@ -1,7 +1,8 @@
-#include "leogeotransfer.h"
+#include <iostream>
+
 #include <Tudat/SimulationSetup/tudatSimulationHeader.h>
 #include "applicationOutput.h"
-#include <iostream>
+#include "leogeotransfer.h"
 
 using namespace tudat;
 using namespace tudat::simulation_setup;
@@ -25,7 +26,7 @@ namespace final_assignment
 
     std::pair<std::vector<double>, std::vector<double>> LeoGeoTransfer::get_bounds() const
     {
-        return {problemBounds[0], problemBounds[1]};
+        return {problemBounds.at( 0 ), problemBounds.at( 1 ) };
     }
 
     // Function calculating fitness: returns delta V and trip time (called by Pagmo)
