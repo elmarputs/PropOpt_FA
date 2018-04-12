@@ -17,7 +17,7 @@ namespace final_assignment
             std::pair<std::vector<double>, std::vector<double>> get_bounds() const;
 
         private:
-            const std::vector<std::vector<double>> problemBounds;
+            std::vector<std::vector<double>> problemBounds;
             double thrustMagnitude;
             double specificImpulse;
     };

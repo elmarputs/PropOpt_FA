@@ -33,9 +33,7 @@ namespace tudat_applications
         return outputPath;
     }
 
-    void createGridSearch(
-            pagmo::problem& problem,
-            const std::vector< std::vector< double > >& bounds,
+    static inline void createGridSearch(pagmo::problem& problem, const std::vector< std::vector< double > >& bounds,
             const std::vector< int > numberOfPoints,
             const std::string& fileName )
     {

@@ -21,7 +21,7 @@ namespace final_assignment
     // LeoGeoTransfer problem contructor
     LeoGeoTransfer::LeoGeoTransfer(const std::vector<std::vector<double> > &bounds)
     {
-        this->problemBounds = bounds;
+        problemBounds = bounds;
     }
 
     std::pair<std::vector<double>, std::vector<double>> LeoGeoTransfer::get_bounds() const
@@ -135,5 +135,7 @@ namespace final_assignment
 
         fitnessVector.push_back(deltaV);
         fitnessVector.push_back(tripTime);
+
+        return fitnessVector;
     }
 }
