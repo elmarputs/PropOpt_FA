@@ -22,6 +22,7 @@ namespace final_assignment
     LeoGeoTransfer::LeoGeoTransfer(const std::vector<std::vector<double> > &bounds)
     {
         problemBounds = bounds;
+        spice_interface::loadStandardSpiceKernels();
     }
 
     std::pair<std::vector<double>, std::vector<double>> LeoGeoTransfer::get_bounds() const

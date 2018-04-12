@@ -15,8 +15,8 @@ using namespace pagmo;
 
 int main( )
 {
+    std::cout << "Initializing program...\n";
 
-	
     //Set seed for reproducible results
     pagmo::random_device::set_seed( 123 );
 
@@ -29,11 +29,13 @@ int main( )
     bounds[ 0 ][ 1 ] = 3500;
     bounds[ 1 ][ 1 ] = 4000;
 
+    std::cout << "Creating problem...\n";
+
     // Create object to compute the problem fitness
     problem prob{LeoGeoTransfer( bounds )};
 
     // Perform grid saerch
-    //createGridSearch( prob, bounds, { 1000, 1000 }, "porkchopEarthMars" );
+    createGridSearch( prob, bounds, { 1000, 1000 }, "porkchopEarthMars" );
 
     // Perform optimization with 1 different optimizers
     for( int j = 0; j < 1; j++ )
@@ -50,6 +52,7 @@ int main( )
         {
             isl.evolve();
             while( isl.status()!=pagmo::evolve_status::idle )
+                std::cout << "Waiting...\n";
                 isl.wait();
 
             // Write current iteration results to file
