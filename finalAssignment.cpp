@@ -34,15 +34,14 @@ int main( )
     // Create object to compute the problem fitness
     problem prob{LeoGeoTransfer( bounds )};
 
-    // Perform grid saerch
+    // Perform grid search
     createGridSearch( prob, bounds, { 1000, 1000 }, "porkchopEarthMars" );
 
     // Perform optimization with 1 different optimizers
     for( int j = 0; j < 1; j++ )
     {
         // Retrieve algorothm
-        int algorithmIndex = j;
-        algorithm algo{ pso( ) };
+        algorithm algo{getMultiObjectiveAlgorithm( j )};
 
         // Create an island with 1024 individuals
         island isl{algo, prob, 1024};
@@ -59,7 +58,7 @@ int main( )
             //printPopulationToFile( isl.get_population( ).get_x( ), "earthMarsLambert_" + std::to_string( j ) + "_" + std::to_string( i ) , false );
             //printPopulationToFile( isl.get_population( ).get_f( ), "earthMarsLambert_" + std::to_string( j ) + "_" + std::to_string( i ) , true );
 
-            std::cout<<i<<" "<<algorithmIndex<<std::endl;
+            std::cout<<i<<" "<<j<<std::endl;
         }
     }
 
