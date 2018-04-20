@@ -33,6 +33,8 @@ namespace final_assignment
     // Function calculating fitness: returns delta V and trip time (called by Pagmo)
     std::vector<double> LeoGeoTransfer::fitness(const std::vector<double> &xVec) const
     {
+        std::cout << "xVec[0]: " << xVec[0] << "; xVec[1]: " << xVec[1] << "\n";
+
         // Create return (i.e. fitness) vector
         std::vector<double> fitnessVector;
 
@@ -107,15 +109,19 @@ namespace final_assignment
                 boost::make_shared<numerical_integrators::IntegratorSettings<>>
                 (numerical_integrators::rungeKutta4, 0.0, 30.0);
 
+        std::cout << "Creating dynamics simulator...\n";
 
         // Create simulation object and propagate dynamics.
         propagators::SingleArcDynamicsSimulator<> dynamicsSimulator(
                     bodyMap, integratorSettings, propagatorSettings, true, false, false );
 
+        std::cout << "Simulation finished. Getting output data...\n";
 
         // Output propagation data
         std::map<double, Eigen::Matrix<double, Eigen::Dynamic, 1 >> numericalSolution =
                 dynamicsSimulator.getEquationsOfMotionNumericalSolution();
+
+        std::cout << "Getting iterator...\n";
 
         std::map<double, Eigen::Matrix<double, Eigen::Dynamic, 1>>::const_iterator iter;
         iter = numericalSolution.end();
@@ -131,6 +137,8 @@ namespace final_assignment
 //                                              std::numeric_limits< double >::digits10,
 //                                              std::numeric_limits< double >::digits10,
 //                                              "," );
+
+
         double deltaV = 0;
         double tripTime = 0;
 

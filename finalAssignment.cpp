@@ -24,9 +24,9 @@ int main( )
     std::vector< std::vector< double > > bounds( 2, std::vector< double >( 2, 0.0 ) );
 
     // Define bounds: Search between thrust magnitude of 1 and 10 N and specific impulse between 3000 and 4000
-    bounds[ 0 ][ 0 ] = 10e-3;
+    bounds[ 0 ][ 0 ] = 10e-3; // Thrust
     bounds[ 1 ][ 0 ] = 50e-3;
-    bounds[ 0 ][ 1 ] = 3500;
+    bounds[ 0 ][ 1 ] = 3500; // Isp
     bounds[ 1 ][ 1 ] = 4000;
 
     std::cout << "Creating problem...\n";

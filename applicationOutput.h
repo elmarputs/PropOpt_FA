@@ -69,6 +69,8 @@ namespace tudat_applications
                 decisionVector[ 0 ] = xDataPoints[ i ];
                 decisionVector[ 1 ] = yDataPoints[ j ];
 
+                std::cout << "Calculating fitness...\n";
+
                 gridSearch( i, j ) = problem.fitness( decisionVector ).at( 0 );
             }
         }
