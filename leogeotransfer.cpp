@@ -42,7 +42,7 @@ namespace final_assignment
         std::vector<std::string> bodies;
         bodies.push_back("Earth");
         //bodies.push_back("Moon");
-        //bodies.push_back("Sun");
+        bodies.push_back("Sun");
 
         std::map<std::string, boost::shared_ptr<BodySettings>> bodySettings = getDefaultBodySettings(bodies);
         // Check if default settings are ok
@@ -59,9 +59,25 @@ namespace final_assignment
         SelectedAccelerationMap accMap;
         std::vector<std::string> bodiesToProp;
         std::vector<std::string> centralBodies;
+        std::vector< std::string > occultingBodies;
 
         bodiesToProp.push_back("Vehicle");
         centralBodies.push_back("Earth");
+        occultingBodies.push_back( "Earth" );
+
+
+        // Create radiation pressure settings
+        double referenceAreaRadiation = 6.0;
+        double radiationPressureCoefficient = 1.2;
+
+        boost::shared_ptr< RadiationPressureInterfaceSettings > vehicleRadiationPressureSettings =
+                boost::make_shared< CannonBallRadiationPressureInterfaceSettings >(
+                    "Sun", referenceAreaRadiation, radiationPressureCoefficient, occultingBodies );
+
+        // Create and set radiation pressure settings
+        bodyMap[ "Vehicle" ]->setRadiationPressureInterface(
+                    "Sun", createRadiationPressureInterface(
+                        vehicleRadiationPressureSettings, "Vehicle", bodyMap ) );
 
         // Specify accelerations acting on propagated vehicle
         std::map<std::string, std::vector<boost::shared_ptr<AccelerationSettings>>> accOnVehicle;
@@ -75,6 +91,8 @@ namespace final_assignment
 
         accOnVehicle["Earth"].push_back(boost::make_shared<AccelerationSettings>(basic_astrodynamics::central_gravity));
         accOnVehicle["Vehicle"].push_back(boost::make_shared<ThrustAccelerationSettings>(thrustDir, thrustMag));
+        accOnVehicle[ "Sun" ].push_back( boost::make_shared< AccelerationSettings >(
+                                                         basic_astrodynamics::cannon_ball_radiation_pressure ) );
         accMap["Vehicle"] = accOnVehicle;
 
         basic_astrodynamics::AccelerationMap accModelMap= createAccelerationModelsMap(bodyMap, accMap, bodiesToProp, centralBodies);

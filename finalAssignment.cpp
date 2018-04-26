@@ -36,7 +36,7 @@ int main( )
 
     // Perform grid search
     std::cout << "Performing grid search...\n";
-    createGridSearch( prob, bounds, { 100, 100 }, "porkchopEarthMars" );
+    createGridSearch( prob, bounds, { 10, 10 }, "porkchopEarthMars" );
 
     // Perform optimization with 1 different optimizers
     for( int j = 0; j < 1; j++ )
