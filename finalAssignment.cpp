@@ -4,11 +4,9 @@
 
 #include "pagmo/pagmo.hpp"
 #include "pagmo/algorithms/pso.hpp"
-#include "pagmo/algorithms/ihs.hpp"
 
 #include "leogeotransfer.h"
 #include "applicationOutput.h"
-#include "saveOptimizationResults.h"
 //#include "getAlgorithm.h"
 
 using namespace final_assignment;
@@ -37,35 +35,44 @@ int main( )
     problem prob{LeoGeoTransfer( bounds )};
 
     // Perform grid search
-    //std::cout << "Performing grid search...\n";
-    //createGridSearch( prob, bounds, { 10, 10 }, "porkchopLeoGeoTransfer" );
+    std::cout << "Performing grid search...\n";
+    createGridSearch( prob, bounds, { 10, 10 }, "porkchopEarthMars" );
 
     // Perform optimization with 1 different optimizers
     for( int j = 0; j < 1; j++ )
     {
         // Retrieve algorothm
-        algorithm algo{ihs()};
+        algorithm algo{moead()};
 
         // Create an island with 1024 individuals
         island isl{algo, prob, 100};
 
         // Evolve for 100 generations
-        for( int i = 0 ; i < 30; i++ )
+        for( int i = 0 ; i < 100; i++ )
         {
             isl.evolve();
-            double k = 0;
             while( isl.status()!=pagmo::evolve_status::idle )
-//                if (k > 1000)
-//                {
-//                    break;
-//                }
-//                std::cout << "Waiting...\n";
+                std::cout << "Waiting...\n";
                 isl.wait();
-                //i++;
 
             // Write current iteration results to file
-            printPopulationToFile( isl.get_population( ).get_x( ), "leoGeoTransfer_" + std::to_string( j ) + "_" + std::to_string( i ) , false );
-            printPopulationToFile( isl.get_population( ).get_f( ), "leoGeoTransfer_" + std::to_string( j ) + "_" + std::to_string( i ) , true );
+//                if ( j == 0)
+//                {
+//                    std::string optimizer = 'nsga2';
+//                    printPopulationToFile( isl.get_population( ).get_x( ), "earthMarsLambert_" + optimizer + "_" + std::to_string( i ) , false );
+//                }
+//                else if ( j == 1)
+//                {
+//                    std::string optimizer = 'moead';
+//                    printPopulationToFile( isl.get_population( ).get_x( ), "earthMarsLambert_" + optimizer + "_" + std::to_string( i ) , false );
+//                }
+//                else
+//                {
+//                    std::string optimizer = 'ihs';
+//                    printPopulationToFile( isl.get_population( ).get_x( ), "earthMarsLambert_" + optimizer + "_" + std::to_string( i ) , false );
+//                }
+            //printPopulationToFile( isl.get_population( ).get_x( ), "earthMarsLambert_" + std::to_string( j ) + "_" + std::to_string( i ) , false );
+            //printPopulationToFile( isl.get_population( ).get_f( ), "earthMarsLambert_" + std::to_string( j ) + "_" + std::to_string( i ) , true );
 
             std::cout<<i<<" "<<j<<std::endl;
         }
