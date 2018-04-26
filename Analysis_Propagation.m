@@ -18,8 +18,8 @@ for i = 0:(nrGen-1)
 end
 figure
 for i = [1, 5, 10, 15, 20, 25, 30]
-    start = i*30+1;
-    end1 = (i+1)*30;
+    start = i*nrGen+1;
+    end1 = (i+1)*nrGen;
 deltaV = sort(fitness(start:end1,1));
 flightTime = sort(fitness(start:end1,2)/3600, 'descend');
 
