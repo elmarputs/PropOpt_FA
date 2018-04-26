@@ -45,10 +45,10 @@ int main( )
         algorithm algo{moead()};
 
         // Create an island with 1024 individuals
-        island isl{algo, prob, 1024};
+        island isl{algo, prob, 10};
 
         // Evolve for 100 generations
-        for( int i = 0 ; i < 100; i++ )
+        for( int i = 0 ; i < 30; i++ )
         {
             isl.evolve();
             while( isl.status()!=pagmo::evolve_status::idle )

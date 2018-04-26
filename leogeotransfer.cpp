@@ -1,8 +1,8 @@
 #include "leogeotransfer.h"
+#include "applicationOutput.h"
 #include <iostream>
 
 #include <Tudat/SimulationSetup/tudatSimulationHeader.h>
-#include "applicationOutput.h"
 
 using namespace tudat;
 using namespace tudat::simulation_setup;
@@ -28,6 +28,11 @@ namespace final_assignment
     std::pair<std::vector<double>, std::vector<double>> LeoGeoTransfer::get_bounds() const
     {
         return {problemBounds.at( 0 ), problemBounds.at( 1 ) };
+    }
+
+    std::size_t LeoGeoTransfer::get_nobj() const
+    {
+        return 2u;
     }
 
     // Function calculating fitness: returns delta V and trip time (called by Pagmo)
@@ -183,7 +188,7 @@ namespace final_assignment
         double tripTime = 0;
 
         fitnessVector.push_back(deltaV);
-        //fitnessVector.push_back(tripTime);
+        fitnessVector.push_back(tripTime);
 
         return fitnessVector;
     }

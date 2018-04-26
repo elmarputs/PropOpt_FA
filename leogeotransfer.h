@@ -15,6 +15,7 @@ namespace final_assignment
             //void Propagate();
             std::vector<double> fitness(const std::vector<double> &x) const;
             std::pair<std::vector<double>, std::vector<double>> get_bounds() const;
+            std::size_t get_nobj() const;
 
         private:
             std::vector<std::vector<double>> problemBounds;
