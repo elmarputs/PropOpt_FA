@@ -24,8 +24,8 @@ int main( )
     std::vector< std::vector< double > > bounds( 2, std::vector< double >( 2, 0.0 ) );
 
     // Define bounds: Search between thrust magnitude of 1 and 10 N and specific impulse between 3000 and 4000
-    bounds[ 0 ][ 0 ] = 20e-3; // Thrust
-    bounds[ 1 ][ 0 ] = 50e-3;
+    bounds[ 0 ][ 0 ] = 20; // Thrust
+    bounds[ 1 ][ 0 ] = 100;
     bounds[ 0 ][ 1 ] = 3500; // Isp
     bounds[ 1 ][ 1 ] = 4000;
 
@@ -36,7 +36,7 @@ int main( )
 
     // Perform grid search
     std::cout << "Performing grid search...\n";
-    createGridSearch( prob, bounds, { 1000, 1000 }, "porkchopEarthMars" );
+    createGridSearch( prob, bounds, { 100, 100 }, "porkchopEarthMars" );
 
     // Perform optimization with 1 different optimizers
     for( int j = 0; j < 1; j++ )

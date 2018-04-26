@@ -1,8 +1,8 @@
+#include "leogeotransfer.h"
 #include <iostream>
 
 #include <Tudat/SimulationSetup/tudatSimulationHeader.h>
 #include "applicationOutput.h"
-#include "leogeotransfer.h"
 
 using namespace tudat;
 using namespace tudat::simulation_setup;
@@ -47,9 +47,10 @@ namespace final_assignment
         std::map<std::string, boost::shared_ptr<BodySettings>> bodySettings = getDefaultBodySettings(bodies);
         // Check if default settings are ok
 
+        double vehicleMass = 100; // kg
         NamedBodyMap bodyMap = createBodies(bodySettings);
         bodyMap["Vehicle"] = boost::make_shared<Body>();
-        bodyMap["Vehicle"]->setConstantBodyMass(100);
+        bodyMap["Vehicle"]->setConstantBodyMass(vehicleMass);
 
         setGlobalFrameBodyEphemerides(bodyMap, "SSB", "ECLIPJ2000");
 
@@ -64,7 +65,7 @@ namespace final_assignment
 
         // Specify accelerations acting on propagated vehicle
         std::map<std::string, std::vector<boost::shared_ptr<AccelerationSettings>>> accOnVehicle;
-        boost::shared_ptr<ThrustEngineSettings> thrustMag = boost::make_shared<ConstantThrustEngineSettings>(this->thrustMagnitude, this->specificImpulse);
+        boost::shared_ptr<ThrustEngineSettings> thrustMag = boost::make_shared<ConstantThrustEngineSettings>(xVec[0], xVec[1]);
         //boost::shared_ptr<ThrustEngineSettings> thrustMag = boost::make_shared<ConstantThrustEngineSettings>(20e-3, 3500);
         boost::shared_ptr<ThrustDirectionGuidanceSettings> thrustDir = boost::make_shared<ThrustDirectionFromStateGuidanceSettings>("Earth", true, false);
 //        boost::shared_ptr<MeeCostateBasedThrustDirectionSettings> meeThrustDir = boost::make_shared<MeeCostateBasedThrustDirectionSettings>(
@@ -101,12 +102,29 @@ namespace final_assignment
 
 
         // Create list of propagation settings
-        std::vector<boost::shared_ptr<propagators::SingleArcPropagatorSettings<double>>> propagatorSettingsVector;
-        propagatorSettingsVector.push_back(transPropSettings);
-        //propagatorSettingsVector.push_back(massPropSettings); // ENABLE IF MASS IS TO BE PROPAGATED USING THRUST MODEL
+                std::vector<boost::shared_ptr<propagators::SingleArcPropagatorSettings<double>>> propagatorSettingsVector;
+                propagatorSettingsVector.push_back(transPropSettings);
+                boost::shared_ptr< MassRateModelSettings > massRateModelSettings =
+                          boost::make_shared< FromThrustMassModelSettings >( true );
+                std::map< std::string, boost::shared_ptr< basic_astrodynamics::MassRateModel > > massRateModels;
+                massRateModels[ "Vehicle" ] = createMassRateModel(
+                            "Vehicle", massRateModelSettings, bodyMap, accModelMap );
 
-        boost::shared_ptr<MultiTypePropagatorSettings<double>> propagatorSettings =
-                boost::make_shared<MultiTypePropagatorSettings<double>>(propagatorSettingsVector, terminationSettings);
+                // Create settings for propagating the mass of the vehicle.
+                std::vector< std::string > bodiesWithMassToPropagate;
+                bodiesWithMassToPropagate.push_back( "Vehicle" );
+
+                Eigen::VectorXd initialBodyMasses = Eigen::VectorXd( 1 );
+                initialBodyMasses( 0 ) = vehicleMass;
+
+                boost::shared_ptr< MassPropagatorSettings< double > > massPropSettings =
+                    boost::make_shared< MassPropagatorSettings< double > >(
+                        bodiesWithMassToPropagate, massRateModels, initialBodyMasses, terminationSettings );
+
+                propagatorSettingsVector.push_back(massPropSettings); // ENABLE IF MASS IS TO BE PROPAGATED USING THRUST MODEL
+
+                boost::shared_ptr<PropagatorSettings<double>> propagatorSettings =
+                        boost::make_shared<MultiTypePropagatorSettings<double>>(propagatorSettingsVector, terminationSettings);
 
         // Set integrator settings
         boost::shared_ptr<numerical_integrators::IntegratorSettings<>> integratorSettings =
@@ -147,7 +165,7 @@ namespace final_assignment
         double tripTime = 0;
 
         fitnessVector.push_back(deltaV);
-        fitnessVector.push_back(tripTime);
+        //fitnessVector.push_back(tripTime);
 
         return fitnessVector;
     }
