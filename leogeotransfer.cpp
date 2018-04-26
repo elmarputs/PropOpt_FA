@@ -32,12 +32,13 @@ namespace final_assignment
 
     std::size_t LeoGeoTransfer::get_nobj() const
     {
-        return 2u;
+        return 1u;
     }
 
     // Function calculating fitness: returns delta V and trip time (called by Pagmo)
     std::vector<double> LeoGeoTransfer::fitness(const std::vector<double> &xVec) const
     {
+        double timeStep = 30.0;
         std::cout << "xVec[0]: " << xVec[0] << "; xVec[1]: " << xVec[1] << "\n";
 
         // Create return (i.e. fitness) vector
@@ -152,7 +153,7 @@ namespace final_assignment
         // Set integrator settings
         boost::shared_ptr<numerical_integrators::IntegratorSettings<>> integratorSettings =
                 boost::make_shared<numerical_integrators::IntegratorSettings<>>
-                (numerical_integrators::rungeKutta4, 0.0, 30.0);
+                (numerical_integrators::rungeKutta4, 0.0, timeStep);
 
         std::cout << "Creating dynamics simulator...\n";
 
@@ -170,7 +171,11 @@ namespace final_assignment
 
         std::map<double, Eigen::Matrix<double, Eigen::Dynamic, 1>>::const_iterator iter;
         iter = numericalSolution.end();
-        std::cout << iter->first;
+        iter--;
+        std::cout << iter->first << "\n";
+        Eigen::Matrix<double, Eigen::Dynamic, 1> state = iter->second;
+        double endMass = state(6);
+        std::cout << endMass << "\n";
 
         std::string outputSubFolder = "FA_output/";
 
@@ -182,12 +187,20 @@ namespace final_assignment
                                               std::numeric_limits< double >::digits10,
                                               std::numeric_limits< double >::digits10,
                                               "," );
+        double tripTime = iter->first;
+        double dV = 0;
+        for (iter = numericalSolution.begin(); iter->first < tripTime; iter++)
+        {
+            Eigen::Matrix<double, Eigen::Dynamic, 1> state = iter->second;
+            double mass = state(6);
+            dV += xVec[0]/mass * timeStep;
+        }
+
+        double deltaV = xVec[1]*9.81*log(vehicleMass/endMass);
+        std::cout << "Delta V: " << dV << " and " << deltaV << "\n";
 
 
-        double deltaV = 0;
-        double tripTime = 0;
-
-        fitnessVector.push_back(deltaV);
+        //fitnessVector.push_back(dV);
         fitnessVector.push_back(tripTime);
 
         return fitnessVector;

@@ -35,14 +35,14 @@ int main( )
     problem prob{LeoGeoTransfer( bounds )};
 
     // Perform grid search
-    std::cout << "Performing grid search...\n";
-    createGridSearch( prob, bounds, { 10, 10 }, "porkchopEarthMars" );
+    //std::cout << "Performing grid search...\n";
+    //createGridSearch( prob, bounds, { 10, 10 }, "porkchopEarthMars" );
 
     // Perform optimization with 1 different optimizers
     for( int j = 0; j < 1; j++ )
     {
         // Retrieve algorothm
-        algorithm algo{moead()};
+        algorithm algo{pso()};
 
         // Create an island with 1024 individuals
         island isl{algo, prob, 10};
