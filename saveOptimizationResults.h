@@ -23,11 +23,11 @@ void printPopulationToFile( const std::vector< std::vector< double > >& populati
     if( !isFitness )
     {
         tudat::input_output::writeMatrixToFile( matrixToPrint, "population_" + fileSuffix + ".dat", 16,
-                                                tudat_pagmo_applications::getOutputPath( ) );
+                                                tudat_applications::getOutputPath( ) );
     }
     else
     {
         tudat::input_output::writeMatrixToFile( matrixToPrint, "fitness_" + fileSuffix + ".dat", 16,
-                                                tudat_pagmo_applications::getOutputPath( )  );
+                                                tudat_applications::getOutputPath( )  );
     }
 }

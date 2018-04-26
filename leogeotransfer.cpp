@@ -32,7 +32,7 @@ namespace final_assignment
 
     std::size_t LeoGeoTransfer::get_nobj() const
     {
-        return 1u;
+        return 2u;
     }
 
     // Function calculating fitness: returns delta V and trip time (called by Pagmo)
@@ -200,7 +200,7 @@ namespace final_assignment
         std::cout << "Delta V: " << dV << " and " << deltaV << "\n";
 
 
-        //fitnessVector.push_back(dV);
+        fitnessVector.push_back(dV);
         fitnessVector.push_back(tripTime);
 
         return fitnessVector;

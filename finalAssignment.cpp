@@ -4,9 +4,11 @@
 
 #include "pagmo/pagmo.hpp"
 #include "pagmo/algorithms/pso.hpp"
+#include "pagmo/algorithms/ihs.hpp"
 
 #include "leogeotransfer.h"
 #include "applicationOutput.h"
+#include "saveOptimizationResults.h"
 //#include "getAlgorithm.h"
 
 using namespace final_assignment;
@@ -24,10 +26,10 @@ int main( )
     std::vector< std::vector< double > > bounds( 2, std::vector< double >( 2, 0.0 ) );
 
     // Define bounds: Search between thrust magnitude of 1 and 10 N and specific impulse between 3000 and 4000
-    bounds[ 0 ][ 0 ] = 20; // Thrust
-    bounds[ 1 ][ 0 ] = 100;
-    bounds[ 0 ][ 1 ] = 3500; // Isp
-    bounds[ 1 ][ 1 ] = 4000;
+    bounds[ 0 ][ 0 ] = 0.1; // Thrust (N)
+    bounds[ 1 ][ 0 ] = 5.0;
+    bounds[ 0 ][ 1 ] = 3000; // Isp (s)
+    bounds[ 1 ][ 1 ] = 5000;
 
     std::cout << "Creating problem...\n";
 
@@ -36,28 +38,34 @@ int main( )
 
     // Perform grid search
     //std::cout << "Performing grid search...\n";
-    //createGridSearch( prob, bounds, { 10, 10 }, "porkchopEarthMars" );
+    //createGridSearch( prob, bounds, { 10, 10 }, "porkchopLeoGeoTransfer" );
 
     // Perform optimization with 1 different optimizers
     for( int j = 0; j < 1; j++ )
     {
         // Retrieve algorothm
-        algorithm algo{pso()};
+        algorithm algo{ihs()};
 
         // Create an island with 1024 individuals
-        island isl{algo, prob, 10};
+        island isl{algo, prob, 100};
 
         // Evolve for 100 generations
         for( int i = 0 ; i < 30; i++ )
         {
             isl.evolve();
+            double k = 0;
             while( isl.status()!=pagmo::evolve_status::idle )
-                std::cout << "Waiting...\n";
+//                if (k > 1000)
+//                {
+//                    break;
+//                }
+//                std::cout << "Waiting...\n";
                 isl.wait();
+                //i++;
 
             // Write current iteration results to file
-            //printPopulationToFile( isl.get_population( ).get_x( ), "earthMarsLambert_" + std::to_string( j ) + "_" + std::to_string( i ) , false );
-            //printPopulationToFile( isl.get_population( ).get_f( ), "earthMarsLambert_" + std::to_string( j ) + "_" + std::to_string( i ) , true );
+            printPopulationToFile( isl.get_population( ).get_x( ), "leoGeoTransfer_" + std::to_string( j ) + "_" + std::to_string( i ) , false );
+            printPopulationToFile( isl.get_population( ).get_f( ), "leoGeoTransfer_" + std::to_string( j ) + "_" + std::to_string( i ) , true );
 
             std::cout<<i<<" "<<j<<std::endl;
         }

@@ -17,6 +17,13 @@ namespace final_assignment
             std::pair<std::vector<double>, std::vector<double>> get_bounds() const;
             std::size_t get_nobj() const;
 
+            template <typename Archive>
+            void serialize(Archive &ar)
+            {
+                ar(problemBounds);
+            }
+
+
         private:
             std::vector<std::vector<double>> problemBounds;
             double thrustMagnitude;
