@@ -49,7 +49,7 @@ namespace final_assignment
 
         NamedBodyMap bodyMap = createBodies(bodySettings);
         bodyMap["Vehicle"] = boost::make_shared<Body>();
-        bodyMap["Vehicle"]->setConstantBodyMass(500);
+        bodyMap["Vehicle"]->setConstantBodyMass(100);
 
         setGlobalFrameBodyEphemerides(bodyMap, "SSB", "ECLIPJ2000");
 
@@ -65,6 +65,7 @@ namespace final_assignment
         // Specify accelerations acting on propagated vehicle
         std::map<std::string, std::vector<boost::shared_ptr<AccelerationSettings>>> accOnVehicle;
         boost::shared_ptr<ThrustEngineSettings> thrustMag = boost::make_shared<ConstantThrustEngineSettings>(this->thrustMagnitude, this->specificImpulse);
+        //boost::shared_ptr<ThrustEngineSettings> thrustMag = boost::make_shared<ConstantThrustEngineSettings>(20e-3, 3500);
         boost::shared_ptr<ThrustDirectionGuidanceSettings> thrustDir = boost::make_shared<ThrustDirectionFromStateGuidanceSettings>("Earth", true, false);
 //        boost::shared_ptr<MeeCostateBasedThrustDirectionSettings> meeThrustDir = boost::make_shared<MeeCostateBasedThrustDirectionSettings>(
 //                    "Vehicle",
@@ -89,6 +90,9 @@ namespace final_assignment
         boost::shared_ptr<PropagationDependentVariableTerminationSettings> terminationSettings =
                 boost::make_shared<PropagationDependentVariableTerminationSettings>(depVariable, geoR, false, false);
 
+        //boost::shared_ptr<PropagationTimeTerminationSettings> terminationSettings =
+        //        boost::make_shared<PropagationTimeTerminationSettings>(100.0, false);
+
         // Settings for translational propagation
         boost::shared_ptr<TranslationalStatePropagatorSettings<double>> transPropSettings =
                 boost::make_shared<TranslationalStatePropagatorSettings<double>>
@@ -101,7 +105,7 @@ namespace final_assignment
         propagatorSettingsVector.push_back(transPropSettings);
         //propagatorSettingsVector.push_back(massPropSettings); // ENABLE IF MASS IS TO BE PROPAGATED USING THRUST MODEL
 
-        boost::shared_ptr<PropagatorSettings<double>> propagatorSettings =
+        boost::shared_ptr<MultiTypePropagatorSettings<double>> propagatorSettings =
                 boost::make_shared<MultiTypePropagatorSettings<double>>(propagatorSettingsVector, terminationSettings);
 
         // Set integrator settings
@@ -112,7 +116,7 @@ namespace final_assignment
         std::cout << "Creating dynamics simulator...\n";
 
         // Create simulation object and propagate dynamics.
-        propagators::SingleArcDynamicsSimulator<> dynamicsSimulator(
+        propagators::SingleArcDynamicsSimulator<double, double> dynamicsSimulator(
                     bodyMap, integratorSettings, propagatorSettings, true, false, false );
 
         std::cout << "Simulation finished. Getting output data...\n";
@@ -127,16 +131,16 @@ namespace final_assignment
         iter = numericalSolution.end();
         std::cout << iter->first;
 
-//        std::string outputSubFolder = "FA_output/";
+        std::string outputSubFolder = "FA_output/";
 
         // Write satellite propagation history to file.
-//        input_output::writeDataMapToTextFile( numericalSolution,
-//                                              "prop_output.dat",
-//                                              tudat_applications::getOutputPath() + outputSubFolder,
-//                                              "",
-//                                              std::numeric_limits< double >::digits10,
-//                                              std::numeric_limits< double >::digits10,
-//                                              "," );
+        input_output::writeDataMapToTextFile( numericalSolution,
+                                              "prop_output.dat",
+                                              tudat_applications::getOutputPath() + outputSubFolder,
+                                              "",
+                                              std::numeric_limits< double >::digits10,
+                                              std::numeric_limits< double >::digits10,
+                                              "," );
 
 
         double deltaV = 0;

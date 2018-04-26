@@ -24,7 +24,7 @@ int main( )
     std::vector< std::vector< double > > bounds( 2, std::vector< double >( 2, 0.0 ) );
 
     // Define bounds: Search between thrust magnitude of 1 and 10 N and specific impulse between 3000 and 4000
-    bounds[ 0 ][ 0 ] = 10e-3; // Thrust
+    bounds[ 0 ][ 0 ] = 20e-3; // Thrust
     bounds[ 1 ][ 0 ] = 50e-3;
     bounds[ 0 ][ 1 ] = 3500; // Isp
     bounds[ 1 ][ 1 ] = 4000;
@@ -35,13 +35,14 @@ int main( )
     problem prob{LeoGeoTransfer( bounds )};
 
     // Perform grid search
+    std::cout << "Performing grid search...\n";
     createGridSearch( prob, bounds, { 1000, 1000 }, "porkchopEarthMars" );
 
     // Perform optimization with 1 different optimizers
     for( int j = 0; j < 1; j++ )
     {
         // Retrieve algorothm
-        algorithm algo{getMultiObjectiveAlgorithm( j )};
+        algorithm algo{moead()};
 
         // Create an island with 1024 individuals
         island isl{algo, prob, 1024};
