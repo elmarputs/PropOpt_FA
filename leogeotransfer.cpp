@@ -1,4 +1,5 @@
 #include "leogeotransfer.h"
+#include "applicationOutput.h"
 #include <iostream>
 
 #include <Tudat/SimulationSetup/tudatSimulationHeader.h>
@@ -165,8 +166,6 @@ namespace final_assignment
         // Output propagation data
         std::map<double, Eigen::Matrix<double, Eigen::Dynamic, 1 >> numericalSolution =
                 dynamicsSimulator.getEquationsOfMotionNumericalSolution();
-        std::map<double, Eigen::Matrix<double, Eigen::Dynamic, 1 >> dependentVariableHistory =
-                dynamicsSimulator.getDependentVariableHistory();
 
         std::cout << "Getting iterator...\n";
 
@@ -182,7 +181,7 @@ namespace final_assignment
 
         // Write satellite propagation history to file.
         input_output::writeDataMapToTextFile( numericalSolution,
-                                              "prop_output_state.dat",
+                                              "prop_output.dat",
                                               tudat_applications::getOutputPath() + outputSubFolder,
                                               "",
                                               std::numeric_limits< double >::digits10,
