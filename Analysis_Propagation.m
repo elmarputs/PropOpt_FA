@@ -1,4 +1,8 @@
-addpath('C:\tudatBundle.git\tudatApplications\PropOpt_FA\SimulationOutput')
+clc
+clear all
+close all
+
+addpath('tudatBundle.git\tudatApplications\PropOpt_FA\SimulationOutput')
 
 nrIndividuals = 100;
 nrGen = 30;
