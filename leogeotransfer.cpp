@@ -79,18 +79,19 @@ namespace final_assignment
         occultingBodies.push_back( "Earth" );
 
         // Create aerodynamic drag settings
-        double referenceArea = 2.0;
-        Eigen::Vector3d constantCoefficients;
-        constantCoefficients( 0 ) = 2.0;
-        constantCoefficients( 2 ) = 0.1;
+//        double referenceArea = 2.0;
+//        Eigen::Vector3d constantCoefficients;
+//        constantCoefficients( 0 ) = 2.0;
+//        constantCoefficients( 1 ) = 0.0;
+//        constantCoefficients( 2 ) = 0.0;
 
-        boost::shared_ptr< AerodynamicCoefficientSettings > aerodynamicCoefficientSettings =
-                boost::make_shared< ConstantAerodynamicCoefficientSettings >(
-                    referenceArea, constantCoefficients, 1, 1 );
+//        boost::shared_ptr< AerodynamicCoefficientSettings > aerodynamicCoefficientSettings =
+//                boost::make_shared< ConstantAerodynamicCoefficientSettings >(
+//                    referenceArea, constantCoefficients, false, true );
 
         // Create and set aerodynamic coefficients object
-        bodyMap[ "Vehicle" ]->setAerodynamicCoefficientInterface(
-                    createAerodynamicCoefficientInterface( aerodynamicCoefficientSettings, "Vehicle" ) );
+//        bodyMap[ "Vehicle" ]->setAerodynamicCoefficientInterface(
+//                    createAerodynamicCoefficientInterface( aerodynamicCoefficientSettings, "Vehicle" ) );
 
 
         // Create radiation pressure settings
@@ -124,7 +125,7 @@ namespace final_assignment
         accOnVehicle[ "Moon" ].push_back( boost::make_shared< AccelerationSettings >(basic_astrodynamics::central_gravity));
         accOnVehicle[ "Jupiter" ].push_back( boost::make_shared< AccelerationSettings >(basic_astrodynamics::central_gravity));
         accOnVehicle[ "Venus" ].push_back( boost::make_shared< AccelerationSettings >(basic_astrodynamics::central_gravity));
-        //accOnVehicle[ "Earth" ].push_back( boost::make_shared< AccelerationSettings >( basic_astrodynamics::aerodynamic));
+//        accOnVehicle[ "Earth" ].push_back( boost::make_shared< AccelerationSettings >( basic_astrodynamics::aerodynamic));
 
         accMap["Vehicle"] = accOnVehicle;
 
