@@ -44,13 +44,13 @@ int main( )
     for( int j = 0; j < 1; j++ )
     {
         // Retrieve algorothm
-        algorithm algo{ihs()};
+        algorithm algo{moead()};
 
         // Create an island with 100 individuals
-        island isl{algo, prob, 1000};
+        island isl{algo, prob, 100};
 
         // Evolve for 100 generations
-        for( int i = 0 ; i < 30; i++ )
+        for( int i = 0 ; i < 4; i++ )
         {
             isl.evolve();
             double k = 0;

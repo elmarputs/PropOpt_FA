@@ -10,14 +10,6 @@ using namespace tudat::propagators;
 
 namespace final_assignment
 {
-//    LeoGeoTransfer::LeoGeoTransfer(double thrustMag, double spImp)
-//    {
-//        this->thrustMagnitude = thrustMag;
-//        this->specificImpulse = spImp;
-//        spice_interface::loadStandardSpiceKernels();
-//        //std::cout << "Constructor called!\n";
-//    }
-
     // LeoGeoTransfer problem contructor
     LeoGeoTransfer::LeoGeoTransfer(const std::vector<std::vector<double> > &bounds)
     {
@@ -44,8 +36,11 @@ namespace final_assignment
         // Create return (i.e. fitness) vector
         std::vector<double> fitnessVector;
 
+        //--SETUP ENVIRONMENT--------------
+
         // Specify all simulated bodies
         std::vector<std::string> bodies;
+        //bodies.push_back("Vehicle");
         bodies.push_back("Earth");
         bodies.push_back("Moon");
         bodies.push_back("Sun");
@@ -74,11 +69,22 @@ namespace final_assignment
         //--SETUP ACCELERATION MODEL---
         SelectedAccelerationMap accMap;
         std::vector<std::string> bodiesToProp;
-        std::vector<std::string> centralBodies;
+        std::map<std::string, std::string> centralBodies;
+        std::vector<std::string> centralBodiesVector;
         std::vector< std::string > occultingBodies;
 
         bodiesToProp.push_back("Vehicle");
-        centralBodies.push_back("Earth");
+        //bodiesToProp.push_back("Earth");
+        //bodiesToProp.push_back("Sun");
+        //centralBodies.push_back("Earth");
+
+        centralBodiesVector.push_back("Earth");
+        //centralBodiesVector.push_back("Sun");
+        //centralBodiesVector.push_back("SSB");
+
+        centralBodies["Vehicle"] = "Earth";
+        //centralBodies["Earth"] = "Sun";
+        //centralBodies["Sun"] = "SSB";
         occultingBodies.push_back( "Earth" );
 
         // Create aerodynamic drag settings
@@ -112,7 +118,6 @@ namespace final_assignment
         // Specify accelerations acting on propagated vehicle
         std::map<std::string, std::vector<boost::shared_ptr<AccelerationSettings>>> accOnVehicle;
         boost::shared_ptr<ThrustEngineSettings> thrustMag = boost::make_shared<ConstantThrustEngineSettings>(xVec[0], xVec[1]);
-        //boost::shared_ptr<ThrustEngineSettings> thrustMag = boost::make_shared<ConstantThrustEngineSettings>(20e-3, 3500);
         boost::shared_ptr<ThrustDirectionGuidanceSettings> thrustDir = boost::make_shared<ThrustDirectionFromStateGuidanceSettings>("Earth", true, false);
 //        boost::shared_ptr<MeeCostateBasedThrustDirectionSettings> meeThrustDir = boost::make_shared<MeeCostateBasedThrustDirectionSettings>(
 //                    "Vehicle",
@@ -132,7 +137,7 @@ namespace final_assignment
 
         accMap["Vehicle"] = accOnVehicle;
 
-        basic_astrodynamics::AccelerationMap accModelMap= createAccelerationModelsMap(bodyMap, accMap, bodiesToProp, centralBodies);
+        basic_astrodynamics::AccelerationMap accModelMap= createAccelerationModelsMap(bodyMap, accMap, centralBodies);
 
         // Set initial state
         Eigen::Vector6d systemInitialState = Eigen::Vector6d::Zero();
@@ -152,53 +157,47 @@ namespace final_assignment
         // Settings for translational propagation
         boost::shared_ptr<TranslationalStatePropagatorSettings<double>> transPropSettings =
                 boost::make_shared<TranslationalStatePropagatorSettings<double>>
-                (centralBodies, accModelMap, bodiesToProp, systemInitialState, terminationSettings,
+                (centralBodiesVector, accModelMap, bodiesToProp, systemInitialState, terminationSettings,
                   propagators::cowell);
 
 
         // Create list of propagation settings
-                std::vector<boost::shared_ptr<propagators::SingleArcPropagatorSettings<double>>> propagatorSettingsVector;
-                propagatorSettingsVector.push_back(transPropSettings);
-                boost::shared_ptr< MassRateModelSettings > massRateModelSettings =
-                          boost::make_shared< FromThrustMassModelSettings >( true );
-                std::map< std::string, boost::shared_ptr< basic_astrodynamics::MassRateModel > > massRateModels;
-                massRateModels[ "Vehicle" ] = createMassRateModel(
-                            "Vehicle", massRateModelSettings, bodyMap, accModelMap );
+        std::vector<boost::shared_ptr<propagators::SingleArcPropagatorSettings<double>>> propagatorSettingsVector;
+        propagatorSettingsVector.push_back(transPropSettings);
+        boost::shared_ptr< MassRateModelSettings > massRateModelSettings =
+                  boost::make_shared< FromThrustMassModelSettings >( true );
+        std::map< std::string, boost::shared_ptr< basic_astrodynamics::MassRateModel > > massRateModels;
+        massRateModels[ "Vehicle" ] = createMassRateModel(
+                    "Vehicle", massRateModelSettings, bodyMap, accModelMap );
 
-                // Create settings for propagating the mass of the vehicle.
-                std::vector< std::string > bodiesWithMassToPropagate;
-                bodiesWithMassToPropagate.push_back( "Vehicle" );
+        // Create settings for propagating the mass of the vehicle.
+        std::vector< std::string > bodiesWithMassToPropagate;
+        bodiesWithMassToPropagate.push_back( "Vehicle" );
 
-                Eigen::VectorXd initialBodyMasses = Eigen::VectorXd( 1 );
-                initialBodyMasses( 0 ) = vehicleMass;
+        Eigen::VectorXd initialBodyMasses = Eigen::VectorXd( 1 );
+        initialBodyMasses( 0 ) = vehicleMass;
 
-                boost::shared_ptr< MassPropagatorSettings< double > > massPropSettings =
-                    boost::make_shared< MassPropagatorSettings< double > >(
-                        bodiesWithMassToPropagate, massRateModels, initialBodyMasses, terminationSettings );
+        boost::shared_ptr< MassPropagatorSettings< double > > massPropSettings =
+            boost::make_shared< MassPropagatorSettings< double > >(
+                bodiesWithMassToPropagate, massRateModels, initialBodyMasses, terminationSettings );
 
-                propagatorSettingsVector.push_back(massPropSettings); // ENABLE IF MASS IS TO BE PROPAGATED USING THRUST MODEL
+        propagatorSettingsVector.push_back(massPropSettings); // ENABLE IF MASS IS TO BE PROPAGATED USING THRUST MODEL
 
-                boost::shared_ptr<PropagatorSettings<double>> propagatorSettings =
-                        boost::make_shared<MultiTypePropagatorSettings<double>>(propagatorSettingsVector, terminationSettings);
+        boost::shared_ptr<PropagatorSettings<double>> propagatorSettings =
+                boost::make_shared<MultiTypePropagatorSettings<double>>(propagatorSettingsVector, terminationSettings);
 
         // Set integrator settings
         boost::shared_ptr<numerical_integrators::IntegratorSettings<>> integratorSettings =
                 boost::make_shared<numerical_integrators::IntegratorSettings<>>
                 (numerical_integrators::rungeKutta4, 0.0, timeStep);
 
-        //std::cout << "Creating dynamics simulator...\n";
-
         // Create simulation object and propagate dynamics.
         propagators::SingleArcDynamicsSimulator<double, double> dynamicsSimulator(
                     bodyMap, integratorSettings, propagatorSettings, true, false, false );
 
-        //std::cout << "Simulation finished. Getting output data...\n";
-
         // Output propagation data
         std::map<double, Eigen::Matrix<double, Eigen::Dynamic, 1 >> numericalSolution =
                 dynamicsSimulator.getEquationsOfMotionNumericalSolution();
-
-       //std::cout << "Getting iterator...\n";
 
         std::map<double, Eigen::Matrix<double, Eigen::Dynamic, 1>>::const_iterator iter;
         iter = numericalSolution.end();
