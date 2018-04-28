@@ -39,7 +39,7 @@ namespace final_assignment
     std::vector<double> LeoGeoTransfer::fitness(const std::vector<double> &xVec) const
     {
         double timeStep = 30.0;
-        std::cout << "xVec[0]: " << xVec[0] << "; xVec[1]: " << xVec[1] << "\n";
+        //std::cout << "xVec[0]: " << xVec[0] << "; xVec[1]: " << xVec[1] << "\n";
 
         // Create return (i.e. fitness) vector
         std::vector<double> fitnessVector;
@@ -47,10 +47,20 @@ namespace final_assignment
         // Specify all simulated bodies
         std::vector<std::string> bodies;
         bodies.push_back("Earth");
-        //bodies.push_back("Moon");
+        bodies.push_back("Moon");
         bodies.push_back("Sun");
+        bodies.push_back( "Mars" );
+        bodies.push_back( "Venus" );
+        bodies.push_back( "Jupiter" );
 
         std::map<std::string, boost::shared_ptr<BodySettings>> bodySettings = getDefaultBodySettings(bodies);
+
+        for( unsigned int i = 0; i < bodies.size( ); i++ )
+        {
+            bodySettings[ bodies.at( i ) ]->ephemerisSettings->resetFrameOrientation( "ECLIPJ2000" );
+            bodySettings[ bodies.at( i ) ]->rotationModelSettings->resetOriginalFrame( "ECLIPJ2000" );
+        }
+
         // Check if default settings are ok
 
         double vehicleMass = 100; // kg
@@ -70,6 +80,20 @@ namespace final_assignment
         bodiesToProp.push_back("Vehicle");
         centralBodies.push_back("Earth");
         occultingBodies.push_back( "Earth" );
+
+        // Create aerodynamic drag settings
+        double referenceArea = 2.0;
+        Eigen::Vector3d constantCoefficients;
+        constantCoefficients( 0 ) = 2.0;
+        constantCoefficients( 2 ) = 0.1;
+
+        boost::shared_ptr< AerodynamicCoefficientSettings > aerodynamicCoefficientSettings =
+                boost::make_shared< ConstantAerodynamicCoefficientSettings >(
+                    referenceArea, constantCoefficients, 1, 1 );
+
+        // Create and set aerodynamic coefficients object
+        bodyMap[ "Vehicle" ]->setAerodynamicCoefficientInterface(
+                    createAerodynamicCoefficientInterface( aerodynamicCoefficientSettings, "Vehicle" ) );
 
 
         // Create radiation pressure settings
@@ -95,10 +119,17 @@ namespace final_assignment
 //                    "Earth",
 //                    costateFunction);
 
-        accOnVehicle["Earth"].push_back(boost::make_shared<AccelerationSettings>(basic_astrodynamics::central_gravity));
+        accOnVehicle["Earth"].push_back(boost::make_shared<SphericalHarmonicAccelerationSettings>(10, 10));
         accOnVehicle["Vehicle"].push_back(boost::make_shared<ThrustAccelerationSettings>(thrustDir, thrustMag));
         accOnVehicle[ "Sun" ].push_back( boost::make_shared< AccelerationSettings >(
                                                          basic_astrodynamics::cannon_ball_radiation_pressure ) );
+        accOnVehicle[ "Sun" ].push_back( boost::make_shared< AccelerationSettings >(basic_astrodynamics::central_gravity));
+        accOnVehicle[ "Mars" ].push_back( boost::make_shared< AccelerationSettings >(basic_astrodynamics::central_gravity));
+        accOnVehicle[ "Moon" ].push_back( boost::make_shared< AccelerationSettings >(basic_astrodynamics::central_gravity));
+        accOnVehicle[ "Jupiter" ].push_back( boost::make_shared< AccelerationSettings >(basic_astrodynamics::central_gravity));
+        accOnVehicle[ "Venus" ].push_back( boost::make_shared< AccelerationSettings >(basic_astrodynamics::central_gravity));
+        accOnVehicle[ "Earth" ].push_back( boost::make_shared< AccelerationSettings >( basic_astrodynamics::aerodynamic));
+
         accMap["Vehicle"] = accOnVehicle;
 
         basic_astrodynamics::AccelerationMap accModelMap= createAccelerationModelsMap(bodyMap, accMap, bodiesToProp, centralBodies);
@@ -155,27 +186,27 @@ namespace final_assignment
                 boost::make_shared<numerical_integrators::IntegratorSettings<>>
                 (numerical_integrators::rungeKutta4, 0.0, timeStep);
 
-        std::cout << "Creating dynamics simulator...\n";
+        //std::cout << "Creating dynamics simulator...\n";
 
         // Create simulation object and propagate dynamics.
         propagators::SingleArcDynamicsSimulator<double, double> dynamicsSimulator(
                     bodyMap, integratorSettings, propagatorSettings, true, false, false );
 
-        std::cout << "Simulation finished. Getting output data...\n";
+        //std::cout << "Simulation finished. Getting output data...\n";
 
         // Output propagation data
         std::map<double, Eigen::Matrix<double, Eigen::Dynamic, 1 >> numericalSolution =
                 dynamicsSimulator.getEquationsOfMotionNumericalSolution();
 
-        std::cout << "Getting iterator...\n";
+       //std::cout << "Getting iterator...\n";
 
         std::map<double, Eigen::Matrix<double, Eigen::Dynamic, 1>>::const_iterator iter;
         iter = numericalSolution.end();
         iter--;
-        std::cout << iter->first << "\n";
+        //std::cout << iter->first << "\n";
         Eigen::Matrix<double, Eigen::Dynamic, 1> state = iter->second;
         double endMass = state(6);
-        std::cout << endMass << "\n";
+        //std::cout << endMass << "\n";
 
         std::string outputSubFolder = "FA_output/";
 
@@ -197,7 +228,7 @@ namespace final_assignment
         }
 
         double deltaV = xVec[1]*9.81*log(vehicleMass/endMass);
-        std::cout << "Delta V: " << dV << " and " << deltaV << "\n";
+        //std::cout << "Delta V: " << dV << " and " << deltaV << "\n";
 
 
         fitnessVector.push_back(dV);

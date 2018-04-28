@@ -20,15 +20,15 @@ int main( )
     std::cout << "Initializing program...\n";
 
     //Set seed for reproducible results
-    pagmo::random_device::set_seed( 123 );
+    pagmo::random_device::set_seed( 160 );
 
     // We have two decision variables each with a lower and upper bound, create a vector of vectors that will contain these.
     std::vector< std::vector< double > > bounds( 2, std::vector< double >( 2, 0.0 ) );
 
     // Define bounds: Search between thrust magnitude of 1 and 10 N and specific impulse between 3000 and 4000
-    bounds[ 0 ][ 0 ] = 0.1; // Thrust (N)
+    bounds[ 0 ][ 0 ] = 0.01; // Thrust (N)
     bounds[ 1 ][ 0 ] = 5.0;
-    bounds[ 0 ][ 1 ] = 3000; // Isp (s)
+    bounds[ 0 ][ 1 ] = 1000; // Isp (s)
     bounds[ 1 ][ 1 ] = 5000;
 
     std::cout << "Creating problem...\n";
@@ -46,8 +46,8 @@ int main( )
         // Retrieve algorothm
         algorithm algo{ihs()};
 
-        // Create an island with 1024 individuals
-        island isl{algo, prob, 100};
+        // Create an island with 100 individuals
+        island isl{algo, prob, 1000};
 
         // Evolve for 100 generations
         for( int i = 0 ; i < 30; i++ )
@@ -64,8 +64,8 @@ int main( )
                 //i++;
 
             // Write current iteration results to file
-            printPopulationToFile( isl.get_population( ).get_x( ), "leoGeoTransfer_" + std::to_string( j ) + "_" + std::to_string( i ) , false );
-            printPopulationToFile( isl.get_population( ).get_f( ), "leoGeoTransfer_" + std::to_string( j ) + "_" + std::to_string( i ) , true );
+            printPopulationToFile( isl.get_population( ).get_x( ), "leoGeoTransfer_" + std::to_string( j ) + "_" + std::to_string( i ) + "_perturbed_seed160_ihs"  , false );
+            printPopulationToFile( isl.get_population( ).get_f( ), "leoGeoTransfer_" + std::to_string( j ) + "_" + std::to_string( i ) + "_perturbed_seed160_ihs" , true );
 
             std::cout<<i<<" "<<j<<std::endl;
         }
