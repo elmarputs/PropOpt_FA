@@ -50,11 +50,11 @@ namespace final_assignment
 
         std::map<std::string, boost::shared_ptr<BodySettings>> bodySettings = getDefaultBodySettings(bodies);
 
-        for( unsigned int i = 0; i < bodies.size( ); i++ )
-        {
-            bodySettings[ bodies.at( i ) ]->ephemerisSettings->resetFrameOrientation( "ECLIPJ2000" );
-            bodySettings[ bodies.at( i ) ]->rotationModelSettings->resetOriginalFrame( "ECLIPJ2000" );
-        }
+//        for( unsigned int i = 0; i < bodies.size( ); i++ )
+//        {
+//            bodySettings[ bodies.at( i ) ]->ephemerisSettings->resetFrameOrientation( "ECLIPJ2000" );
+//            bodySettings[ bodies.at( i ) ]->rotationModelSettings->resetOriginalFrame( "ECLIPJ2000" );
+//        }
 
         // Check if default settings are ok
 
@@ -69,22 +69,13 @@ namespace final_assignment
         //--SETUP ACCELERATION MODEL---
         SelectedAccelerationMap accMap;
         std::vector<std::string> bodiesToProp;
-        std::map<std::string, std::string> centralBodies;
-        std::vector<std::string> centralBodiesVector;
+        std::vector<std::string> centralBodies;
         std::vector< std::string > occultingBodies;
 
         bodiesToProp.push_back("Vehicle");
-        //bodiesToProp.push_back("Earth");
-        //bodiesToProp.push_back("Sun");
-        //centralBodies.push_back("Earth");
 
-        centralBodiesVector.push_back("Earth");
-        //centralBodiesVector.push_back("Sun");
-        //centralBodiesVector.push_back("SSB");
+        centralBodies.push_back("Earth");
 
-        centralBodies["Vehicle"] = "Earth";
-        //centralBodies["Earth"] = "Sun";
-        //centralBodies["Sun"] = "SSB";
         occultingBodies.push_back( "Earth" );
 
         // Create aerodynamic drag settings
@@ -133,11 +124,11 @@ namespace final_assignment
         accOnVehicle[ "Moon" ].push_back( boost::make_shared< AccelerationSettings >(basic_astrodynamics::central_gravity));
         accOnVehicle[ "Jupiter" ].push_back( boost::make_shared< AccelerationSettings >(basic_astrodynamics::central_gravity));
         accOnVehicle[ "Venus" ].push_back( boost::make_shared< AccelerationSettings >(basic_astrodynamics::central_gravity));
-        accOnVehicle[ "Earth" ].push_back( boost::make_shared< AccelerationSettings >( basic_astrodynamics::aerodynamic));
+        //accOnVehicle[ "Earth" ].push_back( boost::make_shared< AccelerationSettings >( basic_astrodynamics::aerodynamic));
 
         accMap["Vehicle"] = accOnVehicle;
 
-        basic_astrodynamics::AccelerationMap accModelMap= createAccelerationModelsMap(bodyMap, accMap, centralBodies);
+        basic_astrodynamics::AccelerationMap accModelMap= createAccelerationModelsMap(bodyMap, accMap, bodiesToProp, centralBodies);
 
         // Set initial state
         Eigen::Vector6d systemInitialState = Eigen::Vector6d::Zero();
@@ -157,7 +148,7 @@ namespace final_assignment
         // Settings for translational propagation
         boost::shared_ptr<TranslationalStatePropagatorSettings<double>> transPropSettings =
                 boost::make_shared<TranslationalStatePropagatorSettings<double>>
-                (centralBodiesVector, accModelMap, bodiesToProp, systemInitialState, terminationSettings,
+                (centralBodies, accModelMap, bodiesToProp, systemInitialState, terminationSettings,
                   propagators::cowell);
 
 
