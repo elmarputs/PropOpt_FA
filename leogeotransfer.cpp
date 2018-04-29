@@ -44,17 +44,11 @@ namespace final_assignment
         bodies.push_back("Earth");
         bodies.push_back("Moon");
         bodies.push_back("Sun");
-        bodies.push_back( "Mars" );
-        bodies.push_back( "Venus" );
-        bodies.push_back( "Jupiter" );
+        bodies.push_back("Mars");
+        bodies.push_back("Venus");
+        bodies.push_back("Jupiter");
 
         std::map<std::string, boost::shared_ptr<BodySettings>> bodySettings = getDefaultBodySettings(bodies);
-
-//        for( unsigned int i = 0; i < bodies.size( ); i++ )
-//        {
-//            bodySettings[ bodies.at( i ) ]->ephemerisSettings->resetFrameOrientation( "ECLIPJ2000" );
-//            bodySettings[ bodies.at( i ) ]->rotationModelSettings->resetOriginalFrame( "ECLIPJ2000" );
-//        }
 
         // Check if default settings are ok
 
@@ -79,19 +73,19 @@ namespace final_assignment
         occultingBodies.push_back( "Earth" );
 
         // Create aerodynamic drag settings
-//        double referenceArea = 2.0;
-//        Eigen::Vector3d constantCoefficients;
-//        constantCoefficients( 0 ) = 2.0;
-//        constantCoefficients( 1 ) = 0.0;
-//        constantCoefficients( 2 ) = 0.0;
+        double referenceArea = 2.0;
+        Eigen::Vector3d constantCoefficients;
+        constantCoefficients( 0 ) = 2.0;
+        constantCoefficients( 1 ) = 0.0;
+        constantCoefficients( 2 ) = 0.0;
 
-//        boost::shared_ptr< AerodynamicCoefficientSettings > aerodynamicCoefficientSettings =
-//                boost::make_shared< ConstantAerodynamicCoefficientSettings >(
-//                    referenceArea, constantCoefficients, false, true );
+        boost::shared_ptr< AerodynamicCoefficientSettings > aerodynamicCoefficientSettings =
+                boost::make_shared< ConstantAerodynamicCoefficientSettings >(
+                    referenceArea, constantCoefficients, false, true );
 
         // Create and set aerodynamic coefficients object
-//        bodyMap[ "Vehicle" ]->setAerodynamicCoefficientInterface(
-//                    createAerodynamicCoefficientInterface( aerodynamicCoefficientSettings, "Vehicle" ) );
+        bodyMap[ "Vehicle" ]->setAerodynamicCoefficientInterface(
+                    createAerodynamicCoefficientInterface( aerodynamicCoefficientSettings, "Vehicle" ) );
 
 
         // Create radiation pressure settings
@@ -103,9 +97,9 @@ namespace final_assignment
                     "Sun", referenceAreaRadiation, radiationPressureCoefficient, occultingBodies );
 
         // Create and set radiation pressure settings
-        bodyMap[ "Vehicle" ]->setRadiationPressureInterface(
-                    "Sun", createRadiationPressureInterface(
-                        vehicleRadiationPressureSettings, "Vehicle", bodyMap ) );
+        //bodyMap[ "Vehicle" ]->setRadiationPressureInterface(
+        //            "Sun", createRadiationPressureInterface(
+        //                vehicleRadiationPressureSettings, "Vehicle", bodyMap ) );
 
         // Specify accelerations acting on propagated vehicle
         std::map<std::string, std::vector<boost::shared_ptr<AccelerationSettings>>> accOnVehicle;
@@ -117,6 +111,7 @@ namespace final_assignment
 //                    costateFunction);
 
         accOnVehicle["Earth"].push_back(boost::make_shared<SphericalHarmonicAccelerationSettings>(10, 10));
+        //accOnVehicle["Earth"].push_back(boost::make_shared<AccelerationSettings>(basic_astrodynamics::central_gravity));
         accOnVehicle["Vehicle"].push_back(boost::make_shared<ThrustAccelerationSettings>(thrustDir, thrustMag));
         accOnVehicle[ "Sun" ].push_back( boost::make_shared< AccelerationSettings >(
                                                          basic_astrodynamics::cannon_ball_radiation_pressure ) );
@@ -157,7 +152,7 @@ namespace final_assignment
         std::vector<boost::shared_ptr<propagators::SingleArcPropagatorSettings<double>>> propagatorSettingsVector;
         propagatorSettingsVector.push_back(transPropSettings);
         boost::shared_ptr< MassRateModelSettings > massRateModelSettings =
-                  boost::make_shared< FromThrustMassModelSettings >( true );
+                  boost::make_shared< FromThrustMassModelSettings >(true);
         std::map< std::string, boost::shared_ptr< basic_astrodynamics::MassRateModel > > massRateModels;
         massRateModels[ "Vehicle" ] = createMassRateModel(
                     "Vehicle", massRateModelSettings, bodyMap, accModelMap );

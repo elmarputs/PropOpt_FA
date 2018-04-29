@@ -1,24 +1,31 @@
 
 % clear all; clc; close all; 
-addpath('C:\tudatBundle.git\tudatApplications\PropOpt_FA\SimulationOutput')
+addpath('F:\tudatBundle\tudatApplications\PropOpt_FA\SimulationOutput')
 
+% Read file
 
-
-nrIndividuals = 1000;
+nrIndividuals = 200;
 nrGen = 30;
+nrRuns = 6;
 
-fitness = [];
-input = [];
-for i = 0:(nrGen-1)
-    stringfitness = ['fitness_leoGeoTransfer_0_' num2str(i) '_nominal_seed160_ihs.dat'];
+fitnessVector = [];
+
+for j = 0:(nrRuns-1)
+    fitness = [];
+    input = [];
+    for i = 0:(nrGen-1)
+    stringfitness = ['fitness_leoGeoTransfer_' num2str(j) '_' num2str(i) '.dat'];
     stringfitness = join(stringfitness);
-    stringInput = ['population_leoGeoTransfer_0_' num2str(i) '_nominal_seed160_ihs.dat'];
+    stringInput = ['population_leoGeoTransfer_' num2str(j) '_' num2str(i) '.dat'];
     stringInput = join(stringInput);
     
     fitnessGen = dlmread(stringfitness);
     inputGen = dlmread(stringInput);
     fitness = [fitness; fitnessGen];
     input = [input; inputGen];
+    end
+    
+    fitnessVector = [fitnessVector; fitness];
 end
     
 

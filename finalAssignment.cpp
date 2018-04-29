@@ -26,7 +26,7 @@ int main( )
     std::vector< std::vector< double > > bounds( 2, std::vector< double >( 2, 0.0 ) );
 
     // Define bounds: Search between thrust magnitude of 1 and 10 N and specific impulse between 3000 and 4000
-    bounds[ 0 ][ 0 ] = 0.01; // Thrust (N)
+    bounds[ 0 ][ 0 ] = 0.1; // Thrust (N)
     bounds[ 1 ][ 0 ] = 5.0;
     bounds[ 0 ][ 1 ] = 1000; // Isp (s)
     bounds[ 1 ][ 1 ] = 5000;
@@ -37,29 +37,24 @@ int main( )
     problem prob{LeoGeoTransfer( bounds )};
 
     // Perform grid search
-    //std::cout << "Performing grid search...\n";
-    //createGridSearch( prob, bounds, { 10, 10 }, "porkchopLeoGeoTransfer" );
+    std::cout << "Performing grid search...\n";
+    createGridSearch( prob, bounds, { 75, 75 }, "porkchopLeoGeoTransfer" );
 
     // Perform optimization with 1 different optimizers
     for( int j = 0; j < 1; j++ )
     {
         // Retrieve algorothm
-        algorithm algo{moead()};
+        algorithm algo{ihs()};
 
-        // Create an island with 100 individuals
-        island isl{algo, prob, 100};
+        // Create an island with 200 individuals
+        island isl{algo, prob, 200};
 
         // Evolve for 100 generations
-        for( int i = 0 ; i < 4; i++ )
+        for( int i = 0 ; i < 30; i++ )
         {
             isl.evolve();
             double k = 0;
             while( isl.status()!=pagmo::evolve_status::idle )
-//                if (k > 1000)
-//                {
-//                    break;
-//                }
-//                std::cout << "Waiting...\n";
                 isl.wait();
                 //i++;
 
@@ -70,7 +65,6 @@ int main( )
             std::cout<<i<<" "<<j<<std::endl;
         }
     }
-
 
     return 0;
 }
